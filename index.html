@@ -2,17 +2,36 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ADMIN VENDAS</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23000000'/%3E%3Ctext x='50%25' y='50%25' font-family='monospace' font-weight='bold' font-size='400' fill='%2300ff00' text-anchor='middle' dy='.35em'%3E$%3C/text%3E%3C/svg%3E" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23000000'/%3E%3Ctext x='50%25' y='50%25' font-family='monospace' font-weight='bold' font-size='400' fill='%2300ff00' text-anchor='middle' dy='.35em'%3E$%3C/text%3E%3C/svg%3E">
+
     <style>
-        body { background: #000; color: #00ff00; font-family: monospace; padding: 20px; text-align: center; }
-        select, input, button { width: 100%; padding: 15px; margin-bottom: 20px; background: #111; border: 1px solid #333; color: #fff; font-size: 1.2rem; }
-        button { background: #00ff00; color: #000; font-weight: bold; cursor: pointer; }
-        #msg { font-weight: bold; min-height: 30px; }
+        body { 
+            background: #000; color: #00ff00; 
+            font-family: monospace; padding: 20px; 
+            text-align: center;
+            /* Evita zoom ao clicar no iphone */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        select, input, button { width: 100%; padding: 15px; margin-bottom: 20px; background: #111; border: 1px solid #333; color: #fff; font-size: 1.2rem; border-radius: 8px; }
+        button { background: #00ff00; color: #000; font-weight: bold; cursor: pointer; border: none; }
+        input:focus, select:focus { outline: 2px solid #00ff00; }
+        #msg { font-weight: bold; min-height: 30px; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <h2>Lançar Venda</h2>
+
+    <h2 style="margin-top: 30px;">Lançar Venda ($)</h2>
+    
     <select id="loja">
         <option value="Prime Umuarama">Prime Umuarama</option>
         <option value="Prime Toledo">Prime Toledo</option>
@@ -24,19 +43,47 @@
         <option value="Marechal">Marechal</option>
         <option value="Perobal">Perobal</option>
     </select>
+
     <input type="number" id="valor" placeholder="Valor (R$)" step="0.01">
-    <button onclick="enviar()">ENVIAR</button>
+    
+    <button onclick="enviar()">ENVIAR AGORA</button>
+    
     <div id="msg"></div>
+
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxfVzjpW8ezzfB9Jog128GIYasbvTWpPa_GYN7lGhrsTsNOLZY_QrhEscGxya3rlbNNhQ/exec"; 
+    
     function enviar() {
-        var l = document.getElementById('loja').value, v = document.getElementById('valor').value.replace(',', '.');
-        if(!v) return;
-        document.querySelector('button').disabled = true; document.getElementById('msg').innerText = "Enviando...";
-        fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body:JSON.stringify({loja:l, valor:v})})
-        .then(()=>{ 
-            document.getElementById('msg').innerText="SUCESSO!"; document.getElementById('valor').value=""; 
-            setTimeout(()=>{document.querySelector('button').disabled=false;document.getElementById('msg').innerText="";},2000);
+        var l = document.getElementById('loja').value;
+        var v = document.getElementById('valor').value.replace(',', '.');
+        
+        if(!v) {
+            document.getElementById('msg').innerText = "DIGITE UM VALOR!";
+            document.getElementById('msg').style.color = "red";
+            return;
+        }
+
+        document.querySelector('button').disabled = true; 
+        document.getElementById('msg').style.color = "#00ff00";
+        document.getElementById('msg').innerText = "Enviando...";
+
+        fetch(WEB_APP_URL, {
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: JSON.stringify({loja:l, valor:v})
+        })
+        .then(() => { 
+            document.getElementById('msg').innerText = "SUCESSO!"; 
+            document.getElementById('valor').value = ""; 
+            
+            setTimeout(() => {
+                document.querySelector('button').disabled = false;
+                document.getElementById('msg').innerText = "";
+            }, 2000);
+        })
+        .catch(() => {
+            document.getElementById('msg').innerText = "ERRO DE CONEXÃO";
+            document.querySelector('button').disabled = false;
         });
     }
 </script>
