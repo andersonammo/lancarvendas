@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN VENDAS</title>
+    <style>
+        body { background: #000; color: #00ff00; font-family: monospace; padding: 20px; text-align: center; }
+        select, input, button { width: 100%; padding: 15px; margin-bottom: 20px; background: #111; border: 1px solid #333; color: #fff; font-size: 1.2rem; }
+        button { background: #00ff00; color: #000; font-weight: bold; cursor: pointer; }
+        #msg { font-weight: bold; min-height: 30px; }
+    </style>
+</head>
+<body>
+    <h2>Lançar Venda</h2>
+    <select id="loja">
+        <option value="Prime Umuarama">Prime Umuarama</option>
+        <option value="Prime Toledo">Prime Toledo</option>
+        <option value="Umuarama 1">Umuarama 1</option>
+        <option value="Palotina">Palotina</option>
+        <option value="Umuarama 2">Umuarama 2</option>
+        <option value="Douradina">Douradina</option>
+        <option value="Altônia">Altônia</option>
+        <option value="Marechal">Marechal</option>
+        <option value="Perobal">Perobal</option>
+    </select>
+    <input type="number" id="valor" placeholder="Valor (R$)" step="0.01">
+    <button onclick="enviar()">ENVIAR</button>
+    <div id="msg"></div>
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxfVzjpW8ezzfB9Jog128GIYasbvTWpPa_GYN7lGhrsTsNOLZY_QrhEscGxya3rlbNNhQ/exec"; 
+    function enviar() {
+        var l = document.getElementById('loja').value, v = document.getElementById('valor').value.replace(',', '.');
+        if(!v) return;
+        document.querySelector('button').disabled = true; document.getElementById('msg').innerText = "Enviando...";
+        fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body:JSON.stringify({loja:l, valor:v})})
+        .then(()=>{ 
+            document.getElementById('msg').innerText="SUCESSO!"; document.getElementById('valor').value=""; 
+            setTimeout(()=>{document.querySelector('button').disabled=false;document.getElementById('msg').innerText="";},2000);
+        });
+    }
+</script>
+</body>
+</html>
